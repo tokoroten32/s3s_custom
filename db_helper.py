@@ -21,14 +21,12 @@ def init_db():
 
 def save_result(result_id, payload):
     try:
-        # stat.ink用ペイロードから元のSplatNet3のJSON文字列を取得
         raw_json_str = payload.get('splatnet_json')
         if not raw_json_str:
             return
             
         raw_data = json.loads(raw_json_str)
 
-        # サーモンランのデータ（vsRuleが存在しない）の場合はスキップ
         if 'vsRule' not in raw_data:
             return
 
@@ -37,7 +35,6 @@ def save_result(result_id, payload):
         rule = raw_data.get('vsRule', {}).get('name')
         stage = raw_data.get('vsStage', {}).get('name')
         
-        # 自分のブキ情報を取得（myTeamのplayers配列からisMyselfがTrueのものを抽出）
         weapon = None
         my_team = raw_data.get('myTeam', {})
         for player in my_team.get('players', []):
@@ -45,7 +42,6 @@ def save_result(result_id, payload):
                 weapon = player.get('weapon', {}).get('name')
                 break
         
-        # DBにはstat.inkフォーマットではなく、SplatNet3の生JSONをそのまま保存
         save_json = raw_json_str
 
         conn = sqlite3.connect(DB_PATH)

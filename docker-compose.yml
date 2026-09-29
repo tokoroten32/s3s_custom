@@ -7,10 +7,6 @@ services:
       - .:/app
     stdin_open: true
     tty: true
-    # network_mode: "host"
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
   db-viewer:
     image: coleifer/sqlite-web
@@ -19,4 +15,13 @@ services:
       - "8080:8080"
     volumes:
       - .:/data
-    command: /data/splatoon3_battles.db
+    command: sqlite_web -H 0.0.0.0 /data/splatoon3_battles.db
+
+  dashboard:
+    build: .
+    container_name: s3s-dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    command: ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]

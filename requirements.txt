@@ -3,3 +3,7 @@ msgpack_python
 packaging
 pymmh3
 requests
+pandas
+streamlit
+plotly
+matplotlib
