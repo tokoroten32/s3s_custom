@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from subprocess import call
 import requests, msgpack
 from packaging import version
-import iksm, utils
+import iksm, utils, db_helper
 
 A_VERSION = "0.7.0"
 
@@ -32,7 +32,8 @@ try:
 	config_file.close()
 except (IOError, ValueError):
 	print("Generating new config file.")
-	CONFIG_DATA = {"api_key": "", "acc_loc": "", "gtoken": "", "bullettoken": "", "session_token": "", "f_gen": "https://api.imink.app/f"}
+	# Delete API_KEY
+	CONFIG_DATA = {"acc_loc": "", "gtoken": "", "bullettoken": "", "session_token": "", "f_gen": "https://api.imink.app/f"}
 	config_file = open(config_path, "w")
 	config_file.seek(0)
 	config_file.write(json.dumps(CONFIG_DATA, indent=4, sort_keys=False, separators=(',', ': ')))
@@ -984,8 +985,10 @@ def prepare_job_result(job, ismonitoring, isblackout, overview_data=None, prevre
 		20012: "kanitank",
 		20013: "sameride",
 		20014: "tripletornado",
+		20015: "decoy",
 		20017: "teioika",
-		20018: "ultra_chakuchi"
+		20018: "ultra_chakuchi",
+		20019: "suminagashi"
 	}
 
 	players = []
@@ -1115,8 +1118,10 @@ def prepare_job_result(job, ismonitoring, isblackout, overview_data=None, prevre
 			"kanitank": 0,
 			"sameride": 0,
 			"tripletornado": 0,
+			"decoy": 0,
 			"teioika": 0,
 			"ultra_chakuchi": 0,
+			"suminagashi": 0,
 			"unknown": 0
 		}
 		for wep_use in wave["specialWeapons"]:
@@ -1284,6 +1289,7 @@ def post_result(data, ismonitoring, isblackout, istestrun, overview_data=None):
 
 		else: # 200 OK
 			print(f"{noun.capitalize()} uploaded to {headerloc}")
+			db_helper.save_result(result_id, payload)
 
 
 def check_for_updates():
@@ -2087,4 +2093,5 @@ def main():
 
 
 if __name__ == "__main__":
+	db_helper.init_db()
 	main()

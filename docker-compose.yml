@@ -1,0 +1,22 @@
+services:
+  s3s:
+    build: .
+    image: s3s-custom:latest
+    container_name: s3s-app
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    # network_mode: "host"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  db-viewer:
+    image: coleifer/sqlite-web
+    container_name: s3s-db-viewer
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/data
+    command: /data/splatoon3_battles.db
